@@ -40,4 +40,5 @@ hs_err_pid*
 *.class
 *.log
 
-.idea0
+.idea
+*.iml

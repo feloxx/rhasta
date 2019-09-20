@@ -97,7 +97,6 @@ class SkipList[K <% Ordered[K], V] {
     while (head.next == null) {
       head = head.down
     }
-    return
   }
 
 
