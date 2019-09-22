@@ -1,9 +1,8 @@
-package org.cdp.rhasta.ds.SkipList.SkipList2
+package org.cdp.rhasta.ds.SkipList
 
 import scala.util.Random
-import scala.collection.mutable.LinkedList
 
-class SkipList[K <% Ordered[K], V] {
+class SkipList2[K <% Ordered[K], V] {
 
   // points to the "top-left" node
   var head = new ListNode(null, null, null)
@@ -144,13 +143,13 @@ class SkipList[K <% Ordered[K], V] {
 
 }
 
-object SkipList extends App {
+object SkipList2 extends App {
 
   /**
     * skip list test cases
     */
   override def main(args: Array[String]) {
-    var a: SkipList[Int, String] = new SkipList[Int, String]
+    var a: SkipList2[Int, String] = new SkipList2[Int, String]
     a.insert(1, "first")
     a.insert(2, "second")
     a.insert(3, "third")
