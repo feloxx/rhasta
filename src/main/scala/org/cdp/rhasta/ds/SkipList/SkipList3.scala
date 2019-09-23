@@ -19,27 +19,27 @@ class SkipList3[T <% Ordered[T]] {
   // 随机产生插入节点的层高
   def randomLevel: Int = {
     // 随机算法1
-//    val lvl = (Math.log(1.0 - Math.random()) / Math.log(1 - P)).toInt
-//    Math.min(lvl, kMaxHeight)
+    //    val lvl = (Math.log(1.0 - Math.random()) / Math.log(1 - P)).toInt
+    //    Math.min(lvl, kMaxHeight)
 
     //随机算法2
     var height = 1
-    while(height < kMaxHeight && (nextInt(kBranching) == 0)) {
+    while (height < kMaxHeight && (nextInt(kBranching) == 0)) {
       height += 1
     }
     height
   }
 
   // 判断是否包含
-  def contains(o: T): Boolean = {
+  def contains(c: T): Boolean = {
     var x = header
     for (i <- level.to(0, -1)) {
-      while (x.forward(i) != null && x.forward(i).value < o) {
+      while (x.forward(i) != null && x.forward(i).value < c) {
         x = x.forward(i)
       }
     }
     x = x.forward(0)
-    x != null && x.value.equals(o)
+    x != null && x.value.equals(c)
   }
 
   // 插入元素

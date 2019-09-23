@@ -2,25 +2,33 @@ package org.cdp.rhasta.ds.SkipList
 
 import scala.collection.mutable.ListBuffer
 
-object Element {
-  def apply(next: Option[Element] = None, prev: Option[Element] = None,
-            up: Option[Element] = None, down: Option[Element] = None, kV: (Int, Any)) = new Element(next = next, prev = prev,
-    up = up, down = down, kV = kV)
-}
-
 // Element structure in the skip list
-class Element(var next: Option[Element] = None, var prev: Option[Element] = None,
-              var up: Option[Element] = None, var down: Option[Element] = None, val kV: (Int, Any)) {
+class Element(var next: Option[Element] = None,
+              var prev: Option[Element] = None,
+              var up: Option[Element] = None,
+              var down: Option[Element] = None,
+              val kV: (Int, Any)) {
   def setNext(el: Option[Element]): Unit = next = el
+
   def setPrev(el: Option[Element]): Unit = prev = el
+
   def setUp(el: Option[Element]): Unit = up = el
+
   def setDown(el: Option[Element]): Unit = down = el
+
   def key(): Int = kV._1
+
   def value(): Any = kV._2
 }
 
-object SkipList1 {
-  def apply(inputList: List[Int]) = new SkipList1(inputList)
+object Element {
+  def apply(next: Option[Element] = None,
+            prev: Option[Element] = None,
+            up: Option[Element] = None,
+            down: Option[Element] = None,
+            kV: (Int, Any)): Element = {
+    new Element(next, prev, up, down, kV)
+  }
 }
 
 class SkipList1(val inputList: List[Int]) {
@@ -48,10 +56,10 @@ class SkipList1(val inputList: List[Int]) {
     var traversal: Option[Element] = startNode
     val levelStack: ListBuffer[Option[Element]] = ListBuffer()
 
-    while(traversal.get.down.isDefined) {
+    while (traversal.get.down.isDefined) {
       levelStack.prepend(traversal)
       traversal = traversal.get.down
-      while(key >= traversal.get.next.get.key) {
+      while (key >= traversal.get.next.get.key) {
         traversal = traversal.get.next
       }
     }
@@ -61,9 +69,9 @@ class SkipList1(val inputList: List[Int]) {
 
   def get(key: Int): Any = {
     var traversal: Option[Element] = startNode
-    while(traversal.get.down.isDefined) {
+    while (traversal.get.down.isDefined) {
       traversal = traversal.get.down
-      while(key >= traversal.get.next.get.key) {
+      while (key >= traversal.get.next.get.key) {
         traversal = traversal.get.next
       }
     }
@@ -79,7 +87,7 @@ class SkipList1(val inputList: List[Int]) {
         e1.setNext(None)
       case (None, Some(e2)) =>
         e2.setPrev(None)
-      case (a @ Some(e1), b @ Some(e2)) =>
+      case (a@Some(e1), b@Some(e2)) =>
         println("HORIZONTALLY: Linking " + e1.kV._1 + " and " + e2.kV._1)
         e1.setNext(b)
         e2.setPrev(a)
@@ -92,7 +100,7 @@ class SkipList1(val inputList: List[Int]) {
         e1.setUp(None)
       case (None, Some(e2)) =>
         e2.setDown(None)
-      case (a @ Some(e1), b @ Some(e2)) =>
+      case (a@Some(e1), b@Some(e2)) =>
         println("VERTICALLY: Linking " + e1.kV._1 + " and " + e2.kV._1)
         e1.setUp(b)
         e2.setDown(a)
@@ -107,11 +115,11 @@ class SkipList1(val inputList: List[Int]) {
     val initialList = (Int.MinValue :: sortedList) :+ Int.MaxValue
     // Create Initial doubly linked list
     var el: Option[Element] = None
-    initialList.foreach{x =>
+    initialList.foreach { x =>
       val newElement = Some(Element(kV = (x, x)))
       connectLeftRight(el, newElement)
       el = newElement
-      if(x == Int.MinValue) leftTopStart = el
+      if (x == Int.MinValue) leftTopStart = el
     }
 
     el = leftTopStart
@@ -119,7 +127,7 @@ class SkipList1(val inputList: List[Int]) {
     val subsetList: ListBuffer[Int] = initialList.to[ListBuffer]
     val newSubsetList: ListBuffer[Int] = ListBuffer()
 
-    while(subsetList.size > 2) {
+    while (subsetList.size > 2) {
       println(subsetList.toString())
       subsetList.foreach({ x =>
         if (scala.util.Random.nextFloat > 0.5 || x == Int.MinValue || x == Int.MaxValue) {
@@ -148,4 +156,8 @@ class SkipList1(val inputList: List[Int]) {
     leftTopStart.get
   }
 
+}
+
+object SkipList1 {
+  def apply(inputList: List[Int]) = new SkipList1(inputList)
 }

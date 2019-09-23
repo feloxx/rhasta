@@ -1,37 +1,46 @@
 package org.cdp.rhasta.ds.SkipList
 
-import scala.util.Random
+import scala.util.Random.nextInt
 
+/**
+  * Represents any node inside the skip list.
+  *
+  * INVARIANTS:
+  * (1) dummy nodes starting each list have null kvpairs
+  * (2) all down pointers all non-null, except for ListNode objects which
+  * make up the bottom-most list
+  * (3) all next pointers all non-null except for those at the end of each list
+  */
 class SkipList2[K <% Ordered[K], V] {
-
   // points to the "top-left" node
   var head = new ListNode(null, null, null)
-  val random = new Random
 
   class KVPair(val key: K, val value: V)
 
-  /**
-    * Represents any node inside the skip list.
-    *
-    * INVARIANTS:
-    * (1) dummy nodes starting each list have null kvpairs
-    * (2) all down pointers all non-null, except for ListNode objects which
-    * make up the bottom-most list
-    * (3) all next pointers all non-null except for those at the end of each list
-    */
   class ListNode(val kvpair: KVPair, var next: ListNode, var down: ListNode)
 
-  def oneListToString(node: ListNode): String =
-    if (null == node) "END\n"
-    else if (null == node.kvpair) "START -> " + oneListToString(node.next)
-    else "(" + node.kvpair.key + "," + node.kvpair.value + ") -> " + oneListToString(node.next)
+  //格式化输出
+  def oneListToString(node: ListNode): String = {
+    if (null == node) {
+      "END\n"
+    } else if (null == node.kvpair) {
+      "START -> " + oneListToString(node.next)
+    } else {
+      "(" + node.kvpair.key + "," + node.kvpair.value + ") -> " + oneListToString(node.next)
+    }
+  }
 
-  def toStringHelper(node: ListNode): String =
-    if (null == node) ""
-    else oneListToString(node) + toStringHelper(node.down)
+  def toStringHelper(node: ListNode): String = {
+    if (null == node) {
+      ""
+    } else {
+      oneListToString(node) + toStringHelper(node.down)
+    }
+  }
 
-  override def toString: String = toStringHelper(this.head).trim
+  override def toString: String = toStringHelper(head).trim
 
+  //插入辅助
   def insertHelper(key: K): List[ListNode] = {
     var end = false
     var curNode: ListNode = head
@@ -42,8 +51,11 @@ class SkipList2[K <% Ordered[K], V] {
       }
 
       nodes = curNode :: nodes
-      if (curNode.down == null) end = true
-      else curNode = curNode.down
+      if (curNode.down == null) {
+        end = true
+      } else {
+        curNode = curNode.down
+      }
     }
     nodes
   }
@@ -62,19 +74,16 @@ class SkipList2[K <% Ordered[K], V] {
       if (lst.isEmpty) {
         lnode = new ListNode(new KVPair(key, value), null, lnode)
         if (!done) {
-          var l: ListNode = new ListNode(head.kvpair, lnode, head)
-          head = l
+          head = new ListNode(head.kvpair, lnode, head)
           done = true
         }
-      }
-      else {
+      } else {
         lnode = new ListNode(new KVPair(key, value), lst.head.next, lnode)
         lst.head.next = lnode
         if (!done) lst = lst.tail
       }
-      done = done || (random.nextInt(2) == 0)
+      done = done || (nextInt(2) == 0) // 掷硬币
     }
-    return
   }
 
   /**
@@ -84,14 +93,12 @@ class SkipList2[K <% Ordered[K], V] {
     * @param key - the key to be deleted
     */
   def delete(key: K): Unit = {
-    var lst: List[ListNode] = insertHelper(key)
-    lst.foreach(e =>
-
+    val lst: List[ListNode] = insertHelper(key)
+    lst.foreach { e =>
       if (e.next != null && e.next.kvpair.key == key) {
-
         e.next = e.next.next
       }
-    )
+    }
 
     while (head.next == null) {
       head = head.down
@@ -104,16 +111,14 @@ class SkipList2[K <% Ordered[K], V] {
     * @return the value associated with the key
     */
   def lookup(key: K): Option[V] = {
-    var found: Boolean = false
+    //    var found: Boolean = false
     var curNode: ListNode = head
-    var pNode: ListNode = curNode;
+    var pNode: ListNode = curNode
 
-    while (!found) {
+    while (true) {
       //horizontal search
-
-      while (curNode.next != null && curNode.next.kvpair.key.<=(key)) { //if this is not the end of the list
-
-        if (curNode.next.kvpair.key.==(key)) {
+      while (curNode.next != null && curNode.next.kvpair.key <= key) { //if this is not the end of the list
+        if (curNode.next.kvpair.key == key) {
           return Option(curNode.next.kvpair.value) //return the option
         }
         pNode = curNode
@@ -125,48 +130,49 @@ class SkipList2[K <% Ordered[K], V] {
         if (curNode.down != null) {
           curNode = curNode.down
           pNode = curNode
+        } else {
+          return None
         }
-        else return None
-      }
-      else if (curNode.next != null && curNode.next.kvpair.key.>(key)) {
+      } else if (curNode.next != null && curNode.next.kvpair.key > key) {
         //return None
         if (pNode.down != null) {
           curNode = pNode.down
           pNode = curNode
+        } else {
+          return None
         }
-        else return None
       }
-
     }
     None
   }
-
 }
 
-object SkipList2 extends App {
-
-  /**
-    * skip list test cases
-    */
-  override def main(args: Array[String]) {
+object SkipList2 {
+  def main(args: Array[String]) {
     var a: SkipList2[Int, String] = new SkipList2[Int, String]
     a.insert(1, "first")
     a.insert(2, "second")
     a.insert(3, "third")
     a.insert(4, "fourth")
+    a.insert(4, "fourth")
+    a.insert(14, "fou4rth")
+    a.insert(42, "fou3rth")
+    a.insert(3, "f1ourth")
+    a.insert(31, "f1our2th")
+    a.insert(32, "f1ou2rth")
+    a.insert(33, "f1our2th")
+    a.insert(31, "f21ourth")
     a.insert(-35, "low")
     a.insert(100, " high")
     a.insert(4, "again")
     println(a)
 
-    println(a.lookup(-35))
-    println(a.lookup(3))
-    println(a.lookup(4))
-    println(a.lookup(5))
-    println(a.lookup(67))
-    println(a.lookup(100))
 
-
+    //    println(a.lookup(-35))
+    //    println(a.lookup(3))
+    //    println(a.lookup(4))
+    //    println(a.lookup(5))
+    //    println(a.lookup(67))
+    //    println(a.lookup(100))
   }
-
 }
