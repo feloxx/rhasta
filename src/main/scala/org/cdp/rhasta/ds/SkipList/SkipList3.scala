@@ -122,7 +122,7 @@ object SkipList3 {
     sList delete 6
     println(sList contains 6)
 
-    println(sList.header)
+    println(sList.toString)
 
 
   }
