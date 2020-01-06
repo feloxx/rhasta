@@ -111,6 +111,10 @@ private class SkipNode[T](val level: Int) {
   }
 }
 
+/**
+  *
+  */
+
 object SkipList3 {
   def main(args: Array[String]) {
     val sList = new SkipList3[Int]
