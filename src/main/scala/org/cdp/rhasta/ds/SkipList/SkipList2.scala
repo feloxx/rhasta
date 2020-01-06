@@ -3,7 +3,7 @@ package org.cdp.rhasta.ds.SkipList
 import scala.util.Random.nextInt
 
 /**
-  * Represents any node inside the skip list.
+  * ListNode: Represents any node inside the skip list.
   *
   * INVARIANTS:
   * (1) dummy nodes starting each list have null kvpairs
@@ -46,7 +46,7 @@ class SkipList2[K <% Ordered[K], V] {
     var curNode: ListNode = head
     var nodes: List[ListNode] = Nil
     while (!end) {
-      while (curNode.next != null && curNode.next.kvpair.key.<(key)) {
+      while (curNode.next != null && curNode.next.kvpair.key < key) {
         curNode = curNode.next
       }
 
@@ -152,19 +152,17 @@ object SkipList2 {
     var a: SkipList2[Int, String] = new SkipList2[Int, String]
     a.insert(1, "first")
     a.insert(2, "second")
-    a.insert(3, "third")
-    a.insert(4, "fourth")
-    a.insert(4, "fourth")
     a.insert(14, "fou4rth")
     a.insert(42, "fou3rth")
     a.insert(3, "f1ourth")
-    a.insert(31, "f1our2th")
-    a.insert(32, "f1ou2rth")
-    a.insert(33, "f1our2th")
-    a.insert(31, "f21ourth")
     a.insert(-35, "low")
-    a.insert(100, " high")
+    a.insert(100, "high")
     a.insert(4, "again")
+    println(a)
+
+    println("=" * 30)
+
+    a.insert(100, "high100")
     println(a)
 
 
